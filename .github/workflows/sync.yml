@@ -68,7 +68,7 @@ jobs:
             echo "::error::Cannot read ${TARGET_REPO} with SYNC_PAT."
             exit 1
           fi
-          if printf '%s\n' "$refs" | cut -f2 | grep -Fxq "refs/heads/${TARGET_BRANCH}"; then
+          if printf '%s\n' "$refs" | cut -f2 | grep -Fx "refs/heads/${TARGET_BRANCH}" >/dev/null; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
           else
             echo "exists=false" >> "$GITHUB_OUTPUT"
