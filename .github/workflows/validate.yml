@@ -27,3 +27,11 @@ jobs:
 
       - name: Validate data files
         run: python3 scripts/validate.py --check-sorted
+
+      - name: Check compatibility exporter
+        run: |
+          python3 scripts/export_legacy.py \
+            --services-out "${RUNNER_TEMP}/services_data.json" \
+            --profiles-out "${RUNNER_TEMP}/profiles_data.json"
+          python3 -m json.tool "${RUNNER_TEMP}/services_data.json" > /dev/null
+          python3 -m json.tool "${RUNNER_TEMP}/profiles_data.json" > /dev/null

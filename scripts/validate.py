@@ -4,8 +4,7 @@
 The validator intentionally implements the small JSON Schema subset used by
 ``schemas/service.schema.json`` and ``schemas/profile.schema.json``.  It also
 performs cross-file checks that JSON Schema cannot express: key/name equality,
-legacy-field mirrors, tip/boolean consistency, profile references and sort
-order.
+flag consistency, profile references, ASCII identifiers and sort order.
 """
 
 from __future__ import annotations
@@ -24,17 +23,7 @@ SERVICE_SCHEMA_PATH = ROOT / "schemas" / "service.schema.json"
 PROFILE_SCHEMA_PATH = ROOT / "schemas" / "profile.schema.json"
 
 SERVICE_NAME_RE = r"^[a-zA-Z0-9_\-\@\.]+\.service$"
-TIP_EXPECTATIONS = {
-    "suggestion": (True, False, False),
-    "kritik": (False, True, False),
-    "gerekli": (False, False, True),
-}
-LEGACY_MIRRORS = (
-    ("description_tr", "desc"),
-    ("description_en", "desc_en"),
-    ("suggestion_tr", "suggestion"),
-    ("suggestion_en", "oneri_en"),
-)
+FORBIDDEN_PROFILE_IDS = {"ofis", "yazilimci"}
 
 
 class DataError(Exception):
@@ -283,25 +272,16 @@ def _check_services(services: dict[str, Any]) -> list[str]:
                 f"$.{key}.name: expected {key!r}, got {record.get('name')!r}"
             )
 
-        for canonical, legacy in LEGACY_MIRRORS:
-            if record.get(canonical) != record.get(legacy):
-                errors.append(
-                    f"$.{key}: legacy field {legacy!r} must equal {canonical!r}"
-                )
-
-        tip = record.get("tip")
-        expected = TIP_EXPECTATIONS.get(tip)
-        if expected is not None:
-            actual = (
-                record.get("safe_to_disable"),
-                record.get("critical"),
-                record.get("required"),
+        flags = (
+            record.get("safe_to_disable"),
+            record.get("critical"),
+            record.get("required"),
+        )
+        if sum(value is True for value in flags) != 1:
+            errors.append(
+                f"$.{key}: exactly one of safe_to_disable, critical and required "
+                f"must be true, got {flags}"
             )
-            if actual != expected:
-                errors.append(
-                    f"$.{key}: tip={tip!r} requires "
-                    f"(safe_to_disable, critical, required)={expected}, got {actual}"
-                )
     return errors
 
 
@@ -314,6 +294,11 @@ def _check_profiles(profiles_doc: dict[str, Any], services: dict[str, Any]) -> l
     for profile_id, profile in profiles.items():
         if not isinstance(profile, dict):
             continue
+        if profile_id in FORBIDDEN_PROFILE_IDS:
+            errors.append(
+                f"$.profiles.{profile_id}: legacy Turkish profile identifiers "
+                "are not allowed; use an English identifier"
+            )
         if profile.get("id") != profile_id:
             errors.append(
                 f"$.profiles.{profile_id}.id: expected {profile_id!r}, "
@@ -352,14 +337,19 @@ def _check_profiles(profiles_doc: dict[str, Any], services: dict[str, Any]) -> l
                     "data/services.json"
                 )
 
-    legacy_labels = profiles_doc.get("profile_service_labels", {})
-    if isinstance(legacy_labels, dict):
-        for service_name in legacy_labels:
-            if service_name not in services:
-                errors.append(
-                    f"$.profile_service_labels.{service_name}: service is not "
-                    "defined in data/services.json"
-                )
+    return errors
+
+
+def _check_ascii_keys(value: Any, path: str = "$") -> list[str]:
+    errors: list[str] = []
+    if isinstance(value, dict):
+        for key, child in value.items():
+            if not isinstance(key, str) or not key.isascii():
+                errors.append(f"{path}: non-ASCII object key {key!r}")
+            errors.extend(_check_ascii_keys(child, f"{path}.{key}"))
+    elif isinstance(value, list):
+        for index, child in enumerate(value):
+            errors.extend(_check_ascii_keys(child, f"{path}[{index}]"))
     return errors
 
 
@@ -410,6 +400,7 @@ def main(argv: list[str] | None = None) -> int:
     else:
         errors.extend(SchemaLite(service_schema).validate(services))
         errors.extend(_check_services(services))
+        errors.extend(_check_ascii_keys(services))
         # Sorting is always checked; --check-sorted is kept as an explicit CI
         # switch so the intent is visible in the workflow file.
         errors.extend(_check_sorted(services))
@@ -418,6 +409,7 @@ def main(argv: list[str] | None = None) -> int:
         errors.append("data/profiles.json: expected a JSON object at the top level")
     else:
         errors.extend(SchemaLite(profile_schema).validate(profiles_doc))
+        errors.extend(_check_ascii_keys(profiles_doc))
         if isinstance(services, dict):
             errors.extend(_check_profiles(profiles_doc, services))
 

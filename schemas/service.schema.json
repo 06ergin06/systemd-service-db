@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/06ergin06/systemd-service-db/main/schemas/service.schema.json",
   "title": "systemd service database",
-  "description": "Keyed service knowledge base used by Pardus Boot Analyzer and Linux Boot Analyzer TUI. Keys are unit names; values are service records.",
+  "description": "Keyed service knowledge base used by Pardus Boot Analyzer and Linux Boot Analyzer TUI. Keys are unit names; values are canonical English-identified service records.",
   "type": "object",
   "minProperties": 1,
   "propertyNames": {
@@ -23,12 +23,7 @@
         "category",
         "safe_to_disable",
         "critical",
-        "required",
-        "desc",
-        "desc_en",
-        "suggestion",
-        "oneri_en",
-        "tip"
+        "required"
       ],
       "properties": {
         "name": {
@@ -79,30 +74,6 @@
         },
         "required": {
           "type": "boolean"
-        },
-        "desc": {
-          "type": "string",
-          "minLength": 1
-        },
-        "desc_en": {
-          "type": "string",
-          "minLength": 1
-        },
-        "suggestion": {
-          "type": "string",
-          "minLength": 1
-        },
-        "oneri_en": {
-          "type": "string",
-          "minLength": 1
-        },
-        "tip": {
-          "type": "string",
-          "enum": [
-            "suggestion",
-            "kritik",
-            "gerekli"
-          ]
         }
       },
       "additionalProperties": false

@@ -2,13 +2,12 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/06ergin06/systemd-service-db/main/schemas/profile.schema.json",
   "title": "systemd optimization profiles",
-  "description": "Ready-made optimization profiles and their service rules. The structure stays compatible with the GTK and TUI applications while adding self-contained localized names and labels.",
+  "description": "Canonical English-identified optimization profiles and their service rules.",
   "type": "object",
   "required": [
     "version",
     "profiles",
     "safe_to_disable_services",
-    "profile_service_labels",
     "labels"
   ],
   "properties": {
@@ -31,16 +30,6 @@
         "$ref": "#/$defs/serviceName"
       },
       "uniqueItems": true
-    },
-    "profile_service_labels": {
-      "type": "object",
-      "propertyNames": {
-        "pattern": "^[a-zA-Z0-9_\\-\\@\\.]+\\.service$"
-      },
-      "additionalProperties": {
-        "type": "string",
-        "minLength": 1
-      }
     },
     "labels": {
       "type": "object",
@@ -80,8 +69,6 @@
       "type": "object",
       "required": [
         "id",
-        "name_tr_key",
-        "desc_tr_key",
         "name_tr",
         "name_en",
         "description_tr",
@@ -93,14 +80,6 @@
         "id": {
           "type": "string",
           "pattern": "^[a-z0-9][a-z0-9_-]*$"
-        },
-        "name_tr_key": {
-          "type": "string",
-          "minLength": 1
-        },
-        "desc_tr_key": {
-          "type": "string",
-          "minLength": 1
         },
         "name_tr": {
           "type": "string",

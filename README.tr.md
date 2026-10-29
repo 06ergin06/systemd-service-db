@@ -17,32 +17,46 @@ için merkezi, iki dilli ve doğrulanmış systemd servis veritabanı.
 
 ```text
 data/services.json       # birim adıyla anahtarlanmış
-data/profiles.json       # Ofis, Yazılımcı, Minimum
+data/profiles.json       # Office, Developer, Minimum
 schemas/                 # JSON Schema Draft 2020-12
 scripts/validate.py      # sözdizimi, şema, referans ve sıralama
+scripts/export_legacy.py # mevcut uygulamalar için uyumluluk adaptörü
 .github/workflows/       # validate.yml, sync.yml
 ```
 
 ## Veri
 
-`data/services.json` içindeki her kayıt `name`, `description_tr/en`,
-`suggestion_tr/en`, `category`, `safe_to_disable`, `critical`, `required` ve
-eski uygulamalar için `desc`, `desc_en`, `suggestion`, `oneri_en`, `tip`
-alanlarını içerir. Eski alanlar kanonik alanlarla birebir aynı olmalıdır.
+Kanonik veri yalnızca İngilizce tanımlayıcılar kullanır. Çeviri metinleri
+değer olarak saklanır; tüm nesne anahtarları, alan adları, profil kimlikleri ve
+enum değerleri İngilizcedir.
 
-| `tip` | `safe_to_disable` | `critical` | `required` |
+`data/services.json` içindeki her kayıt şu alanları içerir:
+
+- `name`
+- `description_tr`, `description_en`
+- `suggestion_tr`, `suggestion_en`
+- `category`, `safe_to_disable`, `critical`, `required`
+
+Kanonik sınıflandırma üç boolean ile ifade edilir:
+
+| Sınıf | `safe_to_disable` | `critical` | `required` |
 |---|---:|---:|---:|
-| `suggestion` | `true` | `false` | `false` |
-| `kritik` | `false` | `true` | `false` |
-| `gerekli` | `false` | `false` | `true` |
+| İsteğe bağlı | `true` | `false` | `false` |
+| Kritik | `false` | `true` | `false` |
+| Zorunlu | `false` | `false` | `true` |
 
 Kategoriler: `system`, `boot`, `network`, `bluetooth`, `printing`, `telemetry`,
 `storage`, `security`, `hardware`, `power`, `desktop`, `virtualization`,
 `database`, `maintenance`, `other`.
 
-`profiles.json`, profil bilgilerini ve `enable`/`disable` kurallarını içerir.
-Referans verilen her servis `services.json` içinde bulunmalıdır. Tam tanımlar
-için [`schemas/`](schemas/) klasörüne bakın.
+`profiles.json`, `office`, `developer` ve `minimum` profillerini içerir.
+Profil, etiket veya güvenle kapatılabilir listesinde geçen her servis
+`services.json` içinde bulunmak zorundadır. Tam tanımlar için
+[`schemas/`](schemas/) klasörüne bakın.
+
+İngilizce servis açıklamaları systemd birim davranışına ve resmi systemd
+belgelerine dayanan özgün teknik özetlerdir. Üçüncü taraf bir uygulamadan
+kopyalanmamıştır.
 
 ## Kullanım
 
@@ -73,31 +87,37 @@ python3 scripts/validate.py --check-sorted
 python3 scripts/validate.py --fix-sort
 ```
 
-JSON sözdizimi, şemalar, tekrarlar, referanslar, bayrak tutarlılığı ve sıralama
-kontrol edilir. Yalnızca Python standart kütüphanesi kullanılır. CI her push ve
-PR'de çalışır.
+JSON sözdizimi, şemalar, tekrarlar, referanslar, bayrak tutarlılığı, ASCII nesne
+anahtarları ve sıralama kontrol edilir. Yalnızca Python standart kütüphanesi
+kullanılır. CI her push ve PR'de aynı kontrolleri çalıştırır.
 
 ## Katkı
 
 1. Servisi `data/services.json` içine ekleyin.
-2. İki dili de doldurun, kategori seçin ve eski alanları eşit tutun.
+2. İki dili de doldurun, kategori seçin ve tam olarak bir sınıflandırma
+   boolean'ını `true` yapın.
 3. Profil davranışı değişiyorsa `data/profiles.json` dosyasını güncelleyin.
 4. `python3 scripts/validate.py --fix-sort` komutunu çalıştırın.
 5. Doğrulama çıktısıyla PR açın.
 
+Alan adlarında, profil kimliklerinde ve kategori değerlerinde İngilizce
+kullanın. Çeviri açıklama ve öneri değerleri memnuniyetle karşılanır.
+
 ## Eşitleme
 
-`main` dalına `data/**` altında değişiklik geldiğinde dosyalar şu repolara
-kopyalanır:
+`main` dalına `data/**` altında değişiklik geldiğinde GitHub Actions, mevcut
+uygulamaların beklediği uyumluluk düzenini üretir ve şu repolara gönderir:
 
 | Repo | Dal | Servisler | Profiller |
 |---|---|---|---|
 | `06ergin06/pardus-boot-analyzer` | `main` | `src/services_data.json` | `src/profiles_data.json` |
 | `06ergin06/linux_boot_analyzer_tui` | `master` | `assets/services_data.json` | `assets/profiles_data.json` |
 
-`SYNC_PAT` secret'ı ve `systemd-service-db-bot` kimliği kullanılır.
+Adaptör `scripts/export_legacy.py` içinde izole edilmiştir; bu repodaki kanonik
+veri İngilizce tanımlayıcılarla kalır. İş akışı `SYNC_PAT` secret'ını ve
+`systemd-service-db-bot` kimliğini kullanır.
 
 ## Lisans
 
-MIT. Kaynak projeler GPL-3.0 kullanmaktadır; yeniden dağıtımdan önce hukuki
-değerlendirme önerilir. Ayrıntılar için [`LICENSE`](LICENSE).
+MIT. Bu bağımsız bir projedir. Bu repodaki tüm içerik yalnızca MIT Lisansı
+altında sunulur. Ayrıntılar için [`LICENSE`](LICENSE).

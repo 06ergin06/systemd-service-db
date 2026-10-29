@@ -1,14 +1,12 @@
 {
   "version": 1,
   "profiles": {
-    "ofis": {
-      "id": "ofis",
-      "name_tr_key": "prof_office_name",
-      "desc_tr_key": "prof_office_desc",
+    "office": {
+      "id": "office",
       "name_tr": "Ofis Modu",
       "name_en": "Office Mode",
       "description_tr": "Ofis işleri ve günlük kullanım için ideal ayarlar. Yazıcı, Bluetooth ve ağ servisleri açık kalır.",
-      "description_en": "Ideal settings for office tasks and daily use. Printer, Bluetooth, and network services stay enabled.",
+      "description_en": "Balanced defaults for office work and everyday use; printing, Bluetooth, and networking remain available.",
       "icon": "document-open",
       "services": {
         "avahi-daemon.service": "enable",
@@ -24,14 +22,12 @@
         "sshd.service": "disable"
       }
     },
-    "yazilimci": {
-      "id": "yazilimci",
-      "name_tr_key": "prof_dev_name",
-      "desc_tr_key": "prof_dev_desc",
+    "developer": {
+      "id": "developer",
       "name_tr": "Yazılımcı Modu",
       "name_en": "Developer Mode",
       "description_tr": "Yazılım geliştiriciler için hazırlandı. Docker, SSH ve veritabanı servisleri otomatik olarak etkinleştirilir. Yazıcı gibi gereksiz servisler kapatılır.",
-      "description_en": "Designed for software developers. Docker, SSH, and database services are automatically enabled. Unnecessary services such as printers are disabled.",
+      "description_en": "A development-oriented preset that enables Docker, SSH, and database services while omitting printing-related units.",
       "icon": "utilities-terminal",
       "services": {
         "avahi-daemon.service": "disable",
@@ -49,12 +45,10 @@
     },
     "minimum": {
       "id": "minimum",
-      "name_tr_key": "prof_min_name",
-      "desc_tr_key": "prof_min_desc",
       "name_tr": "Minimum Servis Modu",
       "name_en": "Minimum Services",
       "description_tr": "Sistemi en hızlı ve hafif şekilde başlatmak için. Ağ ve temel sistem güvenliği dışındaki tüm ek servisler kapatılır. Pil tasarrufu sağlar.",
-      "description_en": "To boot the system as fast and lightweight as possible. Disables all additional services except network and basic system security. Saves laptop battery.",
+      "description_en": "A lean boot preset that keeps networking and core security while disabling optional services; useful on battery-powered systems.",
       "icon": "battery",
       "services": {
         "avahi-daemon.service": "disable",
@@ -85,15 +79,6 @@
     "NetworkManager-wait-online.service",
     "smartmontools.service"
   ],
-  "profile_service_labels": {
-    "bluetooth.service": "bluetooth_desc",
-    "cups-browsed.service": "cups_browsed_desc",
-    "cups.service": "cups_service_desc",
-    "docker.service": "docker_desc",
-    "mysql.service": "mysql_desc",
-    "postgresql.service": "postgresql_desc",
-    "ssh.service": "ssh_desc"
-  },
   "labels": {
     "cups.service": {
       "tr": "Yazıcı Servisi (CUPS)",
