@@ -16,21 +16,29 @@ concurrency:
 
 jobs:
   sync:
-    name: Sync ${{ matrix.repo }}
+    name: Sync ${{ matrix.repo }} (${{ matrix.branch }})
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
         include:
-          - repo: 06ergin06/pardus-boot-analyzer
-            branch: main
-            services_path: src/services_data.json
-            profiles_path: src/profiles_data.json
           - repo: 06ergin06/linux_boot_analyzer_tui
             branch: master
             services_path: assets/services_data.json
             profiles_path: assets/profiles_data.json
+          - repo: 06ergin06/linux_boot_analyzer_tui
+            branch: dev
+            services_path: assets/services_data.json
+            profiles_path: assets/profiles_data.json
+          - repo: 06ergin06/pardus-boot-analyzer
+            branch: main
+            services_path: src/services_data.json
+            profiles_path: src/profiles_data.json
+          - repo: 06ergin06/pardus-boot-analyzer
+            branch: dev
+            services_path: src/services_data.json
+            profiles_path: src/profiles_data.json
     env:
       SYNC_PAT: ${{ secrets.SYNC_PAT }}
       TARGET_REPO: ${{ matrix.repo }}
@@ -50,7 +58,25 @@ jobs:
             exit 1
           fi
 
+      - name: Check target branch
+        id: target
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://x-access-token:${SYNC_PAT}@github.com/${TARGET_REPO}.git"
+          if ! refs="$(git ls-remote --heads "$url" 2>/dev/null)"; then
+            echo "::error::Cannot read ${TARGET_REPO} with SYNC_PAT."
+            exit 1
+          fi
+          if printf '%s\n' "$refs" | cut -f2 | grep -Fxq "refs/heads/${TARGET_BRANCH}"; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Branch ${TARGET_BRANCH} does not exist in ${TARGET_REPO}; skipping."
+          fi
+
       - name: Export compatibility data and push
+        if: steps.target.outputs.exists == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -67,10 +93,10 @@ jobs:
           git -C target add -- "${TARGET_SERVICES_PATH}" "${TARGET_PROFILES_PATH}"
 
           if git -C target diff --cached --quiet; then
-            echo "No data changes to sync for ${TARGET_REPO}."
+            echo "No data changes to sync for ${TARGET_REPO}@${TARGET_BRANCH}."
             exit 0
           fi
 
           git -C target commit \
-            -m "chore(data): sync from systemd-service-db@${GITHUB_SHA::7}"
+            -m "chore(db): sync from systemd-service-db@${GITHUB_SHA::7}"
           git -C target push origin "HEAD:${TARGET_BRANCH}"

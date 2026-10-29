@@ -110,8 +110,13 @@ uygulamaların beklediği uyumluluk düzenini üretir ve şu repolara gönderir:
 
 | Repo | Dal | Servisler | Profiller |
 |---|---|---|---|
-| `06ergin06/pardus-boot-analyzer` | `main` | `src/services_data.json` | `src/profiles_data.json` |
 | `06ergin06/linux_boot_analyzer_tui` | `master` | `assets/services_data.json` | `assets/profiles_data.json` |
+| `06ergin06/linux_boot_analyzer_tui` | `dev` | `assets/services_data.json` | `assets/profiles_data.json` |
+| `06ergin06/pardus-boot-analyzer` | `main` | `src/services_data.json` | `src/profiles_data.json` |
+| `06ergin06/pardus-boot-analyzer` | `dev` | `src/services_data.json` | `src/profiles_data.json` |
+
+Her matrix girdisi bağımsızdır. Hedef dal henüz yoksa o girdi uyarıyla
+atlanır, kalan girdiler çalışmaya devam eder.
 
 Adaptör `scripts/export_legacy.py` içinde izole edilmiştir; bu repodaki kanonik
 veri İngilizce tanımlayıcılarla kalır. İş akışı `SYNC_PAT` secret'ını ve

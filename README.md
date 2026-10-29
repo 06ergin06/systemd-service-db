@@ -108,8 +108,13 @@ layout expected by the existing applications and pushes it to:
 
 | Repository | Branch | Services | Profiles |
 |---|---|---|---|
-| `06ergin06/pardus-boot-analyzer` | `main` | `src/services_data.json` | `src/profiles_data.json` |
 | `06ergin06/linux_boot_analyzer_tui` | `master` | `assets/services_data.json` | `assets/profiles_data.json` |
+| `06ergin06/linux_boot_analyzer_tui` | `dev` | `assets/services_data.json` | `assets/profiles_data.json` |
+| `06ergin06/pardus-boot-analyzer` | `main` | `src/services_data.json` | `src/profiles_data.json` |
+| `06ergin06/pardus-boot-analyzer` | `dev` | `src/services_data.json` | `src/profiles_data.json` |
+
+Each matrix entry is independent. If a target branch does not exist yet, that
+entry is skipped with a warning while the remaining entries continue.
 
 The adapter is isolated in `scripts/export_legacy.py`; the canonical data in
 this repository remains English-identified. The workflow uses the `SYNC_PAT`
