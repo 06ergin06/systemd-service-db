@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/06ergin06/systemd-service-db/main/schemas/service.schema.json",
+  "title": "systemd service database",
+  "description": "Keyed service knowledge base used by Pardus Boot Analyzer and Linux Boot Analyzer TUI. Keys are unit names; values are service records.",
+  "type": "object",
+  "minProperties": 1,
+  "propertyNames": {
+    "pattern": "^[a-zA-Z0-9_\\-\\@\\.]+\\.service$"
+  },
+  "additionalProperties": {
+    "$ref": "#/$defs/service"
+  },
+  "$defs": {
+    "service": {
+      "type": "object",
+      "required": [
+        "name",
+        "description_tr",
+        "description_en",
+        "suggestion_tr",
+        "suggestion_en",
+        "category",
+        "safe_to_disable",
+        "critical",
+        "required",
+        "desc",
+        "desc_en",
+        "suggestion",
+        "oneri_en",
+        "tip"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-\\@\\.]+\\.service$"
+        },
+        "description_tr": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description_en": {
+          "type": "string",
+          "minLength": 1
+        },
+        "suggestion_tr": {
+          "type": "string",
+          "minLength": 1
+        },
+        "suggestion_en": {
+          "type": "string",
+          "minLength": 1
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "system",
+            "boot",
+            "network",
+            "bluetooth",
+            "printing",
+            "telemetry",
+            "storage",
+            "security",
+            "hardware",
+            "power",
+            "desktop",
+            "virtualization",
+            "database",
+            "maintenance",
+            "other"
+          ]
+        },
+        "safe_to_disable": {
+          "type": "boolean"
+        },
+        "critical": {
+          "type": "boolean"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "desc": {
+          "type": "string",
+          "minLength": 1
+        },
+        "desc_en": {
+          "type": "string",
+          "minLength": 1
+        },
+        "suggestion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "oneri_en": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tip": {
+          "type": "string",
+          "enum": [
+            "suggestion",
+            "kritik",
+            "gerekli"
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

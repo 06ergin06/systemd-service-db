@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/06ergin06/systemd-service-db/main/schemas/profile.schema.json",
+  "title": "systemd optimization profiles",
+  "description": "Ready-made optimization profiles and their service rules. The structure stays compatible with the GTK and TUI applications while adding self-contained localized names and labels.",
+  "type": "object",
+  "required": [
+    "version",
+    "profiles",
+    "safe_to_disable_services",
+    "profile_service_labels",
+    "labels"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "profiles": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[a-z0-9][a-z0-9_-]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/profile"
+      }
+    },
+    "safe_to_disable_services": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/serviceName"
+      },
+      "uniqueItems": true
+    },
+    "profile_service_labels": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-zA-Z0-9_\\-\\@\\.]+\\.service$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "labels": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-zA-Z0-9_\\-\\@\\.]+\\.service$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/label"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "serviceName": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_\\-\\@\\.]+\\.service$"
+    },
+    "label": {
+      "type": "object",
+      "required": [
+        "tr",
+        "en"
+      ],
+      "properties": {
+        "tr": {
+          "type": "string",
+          "minLength": 1
+        },
+        "en": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "profile": {
+      "type": "object",
+      "required": [
+        "id",
+        "name_tr_key",
+        "desc_tr_key",
+        "name_tr",
+        "name_en",
+        "description_tr",
+        "description_en",
+        "icon",
+        "services"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+        },
+        "name_tr_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "desc_tr_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name_tr": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name_en": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description_tr": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description_en": {
+          "type": "string",
+          "minLength": 1
+        },
+        "icon": {
+          "type": "string",
+          "minLength": 1
+        },
+        "services": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {
+            "pattern": "^[a-zA-Z0-9_\\-\\@\\.]+\\.service$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "enum": [
+              "enable",
+              "disable"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

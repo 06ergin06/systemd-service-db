@@ -1,0 +1,77 @@
+name: Sync data to consumers
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "data/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-data
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Sync ${{ matrix.repo }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - repo: 06ergin06/pardus-boot-analyzer
+            branch: main
+            services_path: src/services_data.json
+            profiles_path: src/profiles_data.json
+          - repo: 06ergin06/linux_boot_analyzer_tui
+            branch: master
+            services_path: assets/services_data.json
+            profiles_path: assets/profiles_data.json
+    env:
+      SYNC_PAT: ${{ secrets.SYNC_PAT }}
+      TARGET_REPO: ${{ matrix.repo }}
+      TARGET_BRANCH: ${{ matrix.branch }}
+      TARGET_SERVICES_PATH: ${{ matrix.services_path }}
+      TARGET_PROFILES_PATH: ${{ matrix.profiles_path }}
+      GIT_TERMINAL_PROMPT: "0"
+    steps:
+      - name: Check out this repository
+        uses: actions/checkout@v4
+
+      - name: Check sync token
+        shell: bash
+        run: |
+          if [ -z "${SYNC_PAT}" ]; then
+            echo "::error::SYNC_PAT secret is not set."
+            exit 1
+          fi
+
+      - name: Copy data and push
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git clone --depth 1 --branch "${TARGET_BRANCH}" \
+            "https://x-access-token:${SYNC_PAT}@github.com/${TARGET_REPO}.git" target
+
+          mkdir -p "$(dirname "target/${TARGET_SERVICES_PATH}")"
+          mkdir -p "$(dirname "target/${TARGET_PROFILES_PATH}")"
+          cp data/services.json "target/${TARGET_SERVICES_PATH}"
+          cp data/profiles.json "target/${TARGET_PROFILES_PATH}"
+
+          git -C target config user.name "systemd-service-db-bot"
+          git -C target config user.email "systemd-service-db-bot@users.noreply.github.com"
+          git -C target add -- "${TARGET_SERVICES_PATH}" "${TARGET_PROFILES_PATH}"
+
+          if git -C target diff --cached --quiet; then
+            echo "No data changes to sync for ${TARGET_REPO}."
+            exit 0
+          fi
+
+          git -C target commit \
+            -m "chore(data): sync from systemd-service-db@${GITHUB_SHA::7}"
+          git -C target push origin "HEAD:${TARGET_BRANCH}"
