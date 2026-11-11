@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![JSON Schema: Draft 2020-12](https://img.shields.io/badge/JSON%20Schema-Draft%202020--12-green)](schemas/)
 
-A central JSON database of 176 systemd services with Turkish/English descriptions, recommendations, and optimization profiles. Built for [Pardus Boot Analyzer](https://github.com/06ergin06/pardus-boot-analyzer), [Linux Boot Analyzer](https://github.com/06ergin06/linux_boot_analyzer_tui), and other Linux tools.
+A central JSON database of 180 systemd services with Turkish/English descriptions, recommendations, and optimization profiles. Built for [Pardus Boot Analyzer](https://github.com/06ergin06/pardus-boot-analyzer), [Linux Boot Analyzer](https://github.com/06ergin06/linux_boot_analyzer_tui), and other Linux tools.
 
 ## Quick Fetch
 

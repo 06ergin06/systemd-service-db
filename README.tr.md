@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![JSON Schema: Draft 2020-12](https://img.shields.io/badge/JSON%20Schema-Draft%202020--12-green)](schemas/)
 
-Pardus Boot Analyzer, Linux Boot Analyzer ve diğer Linux araçları için hazırlanmış; 176 systemd servisini, Türkçe/İngilizce açıklama ve önerilerini ve optimizasyon profillerini barındıran merkezi JSON veritabanı.
+Pardus Boot Analyzer, Linux Boot Analyzer ve diğer Linux araçları için hazırlanmış; 180 systemd servisini, Türkçe/İngilizce açıklama ve önerilerini ve optimizasyon profillerini barındıran merkezi JSON veritabanı.
 
 ## Hızlı Kullanım
 

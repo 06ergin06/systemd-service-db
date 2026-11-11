@@ -428,6 +428,17 @@
     "critical": false,
     "required": false
   },
+  "fprintd.service": {
+    "name": "fprintd.service",
+    "description_tr": "Parmak izi okuyucu için kimlik doğrulama servisi. Parmak iziyle oturum açma ve sudo doğrulamasını destekler.",
+    "description_en": "Provides fingerprint authentication for login, screen unlock, and sudo prompts.",
+    "suggestion_tr": "Parmak izi okuyucu kullanmıyorsanız kapatılabilir.",
+    "suggestion_en": "Disable it on machines without a fingerprint reader or when fingerprint login is not used.",
+    "category": "hardware",
+    "safe_to_disable": true,
+    "critical": false,
+    "required": false
+  },
   "fstrim.service": {
     "name": "fstrim.service",
     "description_tr": "SSD disklerde kullanılmayan veri bloklarını temizler (TRIM). SSD ömrünü uzatır.",
@@ -967,6 +978,17 @@
     "critical": false,
     "required": false
   },
+  "plymouth-switch-root.service": {
+    "name": "plymouth-switch-root.service",
+    "description_tr": "Plymouth'un initrd'den gerçek kök dosya sistemine geçişini bildirir.",
+    "description_en": "Tells Plymouth to switch from the initrd root to the real root filesystem.",
+    "suggestion_tr": "Plymouth açılış animasyonu kullanıyorsanız açık bırakın; animasyon kullanmıyorsanız kapatılabilir.",
+    "suggestion_en": "Keep it enabled when Plymouth provides the graphical boot splash; it can be disabled with Plymouth itself.",
+    "category": "boot",
+    "safe_to_disable": true,
+    "critical": false,
+    "required": false
+  },
   "polkit.service": {
     "name": "polkit.service",
     "description_tr": "Yetkilendirme politikalarını yönetir. Uygulamaların yönetici yetkisiyle güvenli çalışmasını sağlar.",
@@ -1018,6 +1040,17 @@
     "suggestion_tr": "Dizüstü bilgisayarda faydalı. Masaüstünde gereksiz.",
     "suggestion_en": "Most helpful on battery-powered systems; desktops can skip it.",
     "category": "power",
+    "safe_to_disable": true,
+    "critical": false,
+    "required": false
+  },
+  "proton.VPN.service": {
+    "name": "proton.VPN.service",
+    "description_tr": "Proton VPN arka plan servisi. VPN bağlantılarını ve bölünmüş tünellemeyi yönetir.",
+    "description_en": "Runs the Proton VPN daemon and manages VPN connections and split tunneling.",
+    "suggestion_tr": "Proton VPN kullanmıyorsanız kapatılabilir.",
+    "suggestion_en": "Disable it when Proton VPN is not used.",
+    "category": "network",
     "safe_to_disable": true,
     "critical": false,
     "required": false
@@ -1692,6 +1725,17 @@
     "safe_to_disable": false,
     "critical": true,
     "required": false
+  },
+  "systemd-userdb-load-credentials.service": {
+    "name": "systemd-userdb-load-credentials.service",
+    "description_tr": "systemd kimlik bilgilerinden kullanıcı ve grup kayıtlarını yükler.",
+    "description_en": "Loads user and group records from systemd credentials.",
+    "suggestion_tr": "Kapatmayın. Kullanıcı ve grup kayıtlarının erken önyüklemede kullanılabilmesi için gereklidir.",
+    "suggestion_en": "Keep it enabled; early user and group lookups may depend on these records.",
+    "category": "system",
+    "safe_to_disable": false,
+    "critical": false,
+    "required": true
   },
   "systemd-userdbd.service": {
     "name": "systemd-userdbd.service",
