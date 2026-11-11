@@ -76,7 +76,7 @@ jobs:
             echo "::warning::Branch ${TARGET_BRANCH} does not exist in ${TARGET_REPO}; skipping."
           fi
 
-      - name: Export compatibility data and push
+      - name: Copy canonical data and push
         if: steps.target.outputs.exists == 'true'
         shell: bash
         run: |
@@ -85,9 +85,8 @@ jobs:
           git clone --depth 1 --branch "${TARGET_BRANCH}" \
             "https://x-access-token:${SYNC_PAT}@github.com/${TARGET_REPO}.git" target
 
-          python3 scripts/export_legacy.py \
-            --services-out "target/${TARGET_SERVICES_PATH}" \
-            --profiles-out "target/${TARGET_PROFILES_PATH}"
+          cp data/services.json "target/${TARGET_SERVICES_PATH}"
+          cp data/profiles.json "target/${TARGET_PROFILES_PATH}"
 
           git -C target config user.name "systemd-service-db-bot"
           git -C target config user.email "systemd-service-db-bot@users.noreply.github.com"
