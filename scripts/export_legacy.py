@@ -20,9 +20,9 @@ ROOT = Path(__file__).resolve().parent.parent
 
 def _legacy_service(record: dict[str, Any]) -> dict[str, Any]:
     if record.get("critical"):
-        classification = "kritik"
+        classification = "critical"
     elif record.get("required"):
-        classification = "gerekli"
+        classification = "required"
     else:
         classification = "suggestion"
 
